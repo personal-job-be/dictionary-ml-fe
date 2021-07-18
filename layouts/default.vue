@@ -32,14 +32,12 @@ export default {
 
 <template>
   <div>
-    <!-- Begin page -->
     <Vertical
       v-if="layout.layoutType === 'vertical'"
       :layout="layout.layoutType"
     >
       <Nuxt />
     </Vertical>
-    <!-- END layout-wrapper -->
 
     <Horizontal
       v-if="layout.layoutType === 'horizontal'"
