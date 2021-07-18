@@ -1,5 +1,5 @@
 export default {
-  // loading: '~/components/loading.vue',
+  loading: '~/components/loading.vue',
   router: {
     extendRoutes(routes) {
       routes.push({
@@ -12,14 +12,15 @@ export default {
    ** Nuxt rendering mode
    ** See https://nuxtjs.org/api/configuration-mode
    */
-  server: {
-    port: process.env.PORT || 3000, // default: 3000
-    host: '0.0.0.0', // default: localhost
-  },
+  // server: {
+  //   port: process.env.PORT || 3000, // default: 3000
+  //   host: '0.0.0.0', // default: localhost
+  // },
   /*
    ** Nuxt target
    ** See https://nuxtjs.org/api/configuration-target
    */
+  ssr: false,
   target: 'static',
   /*
    ** Headers of the page
@@ -108,14 +109,14 @@ export default {
    */
   build: {},
   env: {
-    auth: process.env.VUE_APP_DEFAULT_AUTH,
-    apikey: process.env.VUE_APP_APIKEY,
-    authdomain: process.env.VUE_APP_AUTHDOMAIN,
-    databaseurl: process.env.VUE_APP_DATABASEURL,
-    projectid: process.env.VUE_APP_PROJECTId,
-    storgebucket: process.env.VUE_APP_STORAGEBUCKET,
-    message: process.env.VUE_APP_MESSAGINGSENDERID,
-    appid: process.env.VUE_APP_APPId,
-    measurement: process.env.VUE_APP_MEASUREMENTID,
+    // auth: process.env.VUE_APP_DEFAULT_AUTH,
+    // apikey: process.env.VUE_APP_APIKEY,
+    // authdomain: process.env.VUE_APP_AUTHDOMAIN,
+    // databaseurl: process.env.VUE_APP_DATABASEURL,
+    // projectid: process.env.VUE_APP_PROJECTId,
+    // storgebucket: process.env.VUE_APP_STORAGEBUCKET,
+    // message: process.env.VUE_APP_MESSAGINGSENDERID,
+    // appid: process.env.VUE_APP_APPId,
+    // measurement: process.env.VUE_APP_MEASUREMENTID,
   },
 }

@@ -1,20 +1,20 @@
 <script>
 import { mapState } from 'vuex'
 
-import Vertical from './vertical'
-import Horizontal from './horizontal'
+// import Vertical from './vertical'
+// import Horizontal from './horizontal'
 import Detached from './detached'
-import TwoColumn from './two-column'
+// import TwoColumn from './two-column'
 
 /**
  * Default Layout
  */
 export default {
   components: {
-    Vertical,
-    Horizontal,
+    // Vertical,
+    // Horizontal,
     Detached,
-    TwoColumn,
+    // TwoColumn,
   },
   data() {
     return {}
