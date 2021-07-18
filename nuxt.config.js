@@ -12,7 +12,10 @@ export default {
    ** Nuxt rendering mode
    ** See https://nuxtjs.org/api/configuration-mode
    */
-  ssr: false,
+  server: {
+    port: process.env.PORT || 3000, // default: 3000
+    host: '0.0.0.0', // default: localhost
+  },
   /*
    ** Nuxt target
    ** See https://nuxtjs.org/api/configuration-target
