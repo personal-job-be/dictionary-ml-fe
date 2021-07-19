@@ -108,15 +108,7 @@ export default {
    ** See https://nuxtjs.org/api/configuration-build/
    */
   build: {},
-  env: {
-    // auth: process.env.VUE_APP_DEFAULT_AUTH,
-    // apikey: process.env.VUE_APP_APIKEY,
-    // authdomain: process.env.VUE_APP_AUTHDOMAIN,
-    // databaseurl: process.env.VUE_APP_DATABASEURL,
-    // projectid: process.env.VUE_APP_PROJECTId,
-    // storgebucket: process.env.VUE_APP_STORAGEBUCKET,
-    // message: process.env.VUE_APP_MESSAGINGSENDERID,
-    // appid: process.env.VUE_APP_APPId,
-    // measurement: process.env.VUE_APP_MEASUREMENTID,
+  publicRuntimeConfig: {
+    API_KEY: process.env.TOKEN_API,
   },
 }
