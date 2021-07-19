@@ -265,7 +265,7 @@ export default {
           </b-dropdown-item>
         </b-nav-item-dropdown> -->
 
-        <b-nav-item-dropdown
+        <!-- <b-nav-item-dropdown
           right
           class="notification-list"
           menu-class="dropdown-lg"
@@ -306,7 +306,6 @@ export default {
               </p>
             </a>
 
-            <!-- item-->
             <a href="javascript:void(0);" class="dropdown-item notify-item">
               <div class="notify-icon">
                 <img
@@ -323,7 +322,6 @@ export default {
               </p>
             </a>
 
-            <!-- item-->
             <a href="javascript:void(0);" class="dropdown-item notify-item">
               <div class="notify-icon">
                 <img
@@ -340,7 +338,6 @@ export default {
               </p>
             </a>
 
-            <!-- item-->
             <a href="javascript:void(0);" class="dropdown-item notify-item">
               <div class="notify-icon bg-soft-warning text-warning">
                 <i class="mdi mdi-account-plus"></i>
@@ -353,7 +350,6 @@ export default {
               </p>
             </a>
 
-            <!-- item-->
             <a href="javascript:void(0);" class="dropdown-item notify-item">
               <div class="notify-icon bg-info">
                 <i class="mdi mdi-comment-account-outline"></i>
@@ -366,7 +362,6 @@ export default {
               </p>
             </a>
 
-            <!-- item-->
             <a href="javascript:void(0);" class="dropdown-item notify-item">
               <div class="notify-icon bg-secondary">
                 <i class="mdi mdi-heart"></i>
@@ -391,7 +386,7 @@ export default {
             {{ $t('navbar.dropdown.notification.button') }}
             <i class="fi-arrow-right"></i>
           </a>
-        </b-nav-item-dropdown>
+        </b-nav-item-dropdown> -->
 
         <b-nav-item-dropdown
           right
@@ -428,14 +423,14 @@ export default {
             <i class="remixicon-settings-3-line"></i>
             <span>{{ $t('navbar.dropdown.name.list.settings') }}</span>
           </b-dropdown-item>
-
+          <!-- 
           <b-dropdown-item href="#">
             <i class="remixicon-wallet-line"></i>
             <span>
               {{ $t('navbar.dropdown.name.list.mywallet') }}
               <span class="badge badge-success float-right">3</span>
             </span>
-          </b-dropdown-item>
+          </b-dropdown-item> -->
 
           <b-dropdown-item href="#">
             <i class="remixicon-lock-line"></i>
@@ -453,7 +448,7 @@ export default {
           </a>
         </b-nav-item-dropdown>
 
-        <li class="dropdown notification-list">
+        <!-- <li class="dropdown notification-list">
           <a
             href="javascript:void(0);"
             class="nav-link right-bar-toggle toggle-right"
@@ -461,7 +456,7 @@ export default {
           >
             <i class="fe-settings noti-icon toggle-right"></i>
           </a>
-        </li>
+        </li> -->
       </ul>
 
       <!-- LOGO -->
@@ -482,7 +477,7 @@ export default {
             <img src="~/assets/images/logo-sm.png" alt height="24" />
           </span>
           <span class="logo-lg">
-            <img src="~/assets/images/logo-light.png" alt height="20" />
+            <img src="/logo.png" alt width="60%" />
           </span>
         </nuxt-link>
       </div>

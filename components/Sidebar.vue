@@ -263,7 +263,7 @@ export default {
             href="javascript: void(0);"
             class="text-reset dropdown-toggle h5 mt-2 mb-1 d-block"
             data-toggle="dropdown"
-            >Nik Patel</a
+            >Reza Limena</a
           >
           <div class="dropdown-menu user-pro-dropdown">
             <!-- item-->
