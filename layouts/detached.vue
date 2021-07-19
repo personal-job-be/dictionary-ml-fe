@@ -61,7 +61,7 @@ export default {
       <div class="content">
         <Topbar />
         <!-- Start Content-->
-        <div class="container-fluid">
+        <div class="container-fluid mt-4 mb-4">
           <Nuxt />
         </div>
       </div>
