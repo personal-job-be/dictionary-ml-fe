@@ -44,9 +44,8 @@
     </div>
     <div>
       <b-button
-        variant="success"
         block
-        class="btn-rounded drop-shadow mt-3"
+        class="btn-rounded drop-shadow mt-3 btn-gradient"
         @click="save"
       >
         Save</b-button
@@ -87,21 +86,7 @@ export default {
       },
     },
   },
-  async mounted() {
-    try {
-      const resAddPost = await this.$axios.$get(
-        `/corpus_detail?filterByFormula=FIND("RELATIONAL", {detail_master_desc})`,
-        {
-          headers: {
-            Authorization: this.$config.API_KEY,
-          },
-        }
-      )
-      this.idMaster = resAddPost.records[0].id
-    } catch (error) {
-      console.log(error)
-    }
-  },
+
   methods: {
     cancel() {
       this.$emit('cancelNew', 'cancel')
@@ -114,25 +99,17 @@ export default {
         console.log(this.$v)
       } else {
         const payLoad = {
-          records: [
-            {
-              fields: {
-                sub_detail_master_abbreviation: this.form.abbreviation,
-                sub_detail_master_desc: this.form.desc,
-                sub_detail_master_code: this.form.code,
-                corpus_detail: [`${this.idMaster}`],
-              },
-            },
-          ],
+          abbreviation: this.form.abbreviation,
+          description: this.form.desc,
+          code: this.form.code,
         }
         try {
-          const resAddPost = await this.$axios.$post(`/sub_detail`, payLoad, {
+          await this.$axios.$post(`/master/relation`, payLoad, {
             headers: {
-              Authorization: this.$config.API_KEY,
+              Authorization: this.$auth.strategy.token.get(),
             },
           })
           this.$emit('cancelNew', 'new')
-          console.log(resAddPost)
         } catch (error) {}
       }
     },

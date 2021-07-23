@@ -16,6 +16,8 @@ export default {
     Detached,
     // TwoColumn,
   },
+  middleware: 'auth',
+  // transition: 'slide-bottom',
   data() {
     return {}
   },

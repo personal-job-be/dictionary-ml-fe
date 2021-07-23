@@ -4,7 +4,7 @@ export default {
     extendRoutes(routes) {
       routes.push({
         path: '/',
-        component: '~/pages/dashboard/index.vue',
+        component: '~/pages/auth/login',
       })
     },
   },
@@ -37,16 +37,26 @@ export default {
         content: process.env.npm_package_description || '',
       },
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/small.png' }],
+    link: [
+      { rel: 'icon', type: 'image/x-icon', href: '/small.png' },
+      {
+        rel: 'stylesheet',
+        href: 'https://fonts.googleapis.com/css2?family=Oxygen&display=swap',
+      },
+    ],
   },
   /*
    ** Global CSS
    */
   css: [
     '~/assets/scss/app.scss',
+    '~layouts/global.css',
     'quill/dist/quill.core.css',
     'quill/dist/quill.snow.css',
     'quill/dist/quill.bubble.css',
+    '~/assets/main.css',
+    '~/assets/fonts/quicksand.css',
+    '~/assets/css/styles.css',
   ],
   /*
    ** Plugins to load before mounting the App
@@ -85,6 +95,7 @@ export default {
     'bootstrap-vue/nuxt',
     'nuxt-i18n',
     '@nuxtjs/axios',
+    '@nuxtjs/auth-next',
   ],
   axios: {
     baseURL: process.env.API_URL, // Used as fallback if no runtime config is provided
@@ -100,6 +111,34 @@ export default {
         es: require('./locales/es.json'),
         ar: require('./locales/ar.json'),
         zh: require('./locales/zh.json'),
+      },
+    },
+  },
+  auth: {
+    redirect: {
+      login: '/auth/login',
+      logout: '/auth/login',
+      home: '/dashboard',
+    },
+    strategies: {
+      local: {
+        token: {
+          property: 'data.token',
+          required: true,
+          type: 'Bearer',
+        },
+        user: {
+          property: 'success',
+          // autoFetch: true,
+        },
+        endpoints: {
+          login: {
+            url: '/auth/login',
+            method: 'post',
+          },
+          logout: {},
+          user: { url: '/master/postag', method: 'get' },
+        },
       },
     },
   },
