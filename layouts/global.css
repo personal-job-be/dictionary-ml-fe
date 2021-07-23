@@ -1,0 +1,9 @@
+@font-face {
+  font-family: "Fuggles-Regular";
+  src: local("Fuggles-Regular"),
+   url(~assets/fonts/Fuggles-Regular.ttf) ;
+}
+
+html {
+  font-family: "Fuggles-Regular";
+}

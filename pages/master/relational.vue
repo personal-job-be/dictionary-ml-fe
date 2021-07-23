@@ -1,5 +1,12 @@
 <template>
   <div>
+    <loading
+      :active="isLoading"
+      :can-cancel="false"
+      :is-full-page="true"
+      loader="bars"
+      color="#5b315f"
+    />
     <b-alert
       :show="dismissCountDown"
       dismissible
@@ -20,7 +27,7 @@
       <b-col sm="4" md="3" lg="2" class="d-flex justify-content-end">
         <b-button
           variant="success"
-          class="btn-rounded drop-shadow"
+          class="btn-rounded drop-shadow btn-gradient"
           @click="newPost"
         >
           <i class="fe-plus"></i> New Relational</b-button
@@ -42,7 +49,7 @@
           <tr v-for="(record, index) in filterData" :key="index">
             <td class="text-primary">
               <div v-if="!record.isModified">
-                {{ record.fields.sub_detail_master_desc }}
+                {{ record.description }}
               </div>
               <div v-else>
                 <b-form-input
@@ -61,7 +68,7 @@
             </td>
             <td class="text-primary">
               <div v-if="!record.isModified">
-                {{ record.fields.sub_detail_master_abbreviation }}
+                {{ record.abbreviation }}
               </div>
               <div v-else>
                 <b-form-input
@@ -80,7 +87,7 @@
             </td>
             <td class="text-primary">
               <div v-if="!record.isModified">
-                {{ record.fields.sub_detail_master_code }}
+                {{ record.code }}
               </div>
               <div v-else>
                 <b-form-input
@@ -157,17 +164,6 @@
             </td>
           </tr>
         </tbody>
-        <tbody v-if="filterData !== null && isLoading">
-          <tr>
-            <td>
-              <b-spinner
-                variant="primary"
-                style="width: 2.25rem; height: 2.25rem"
-                label="Large Spinner"
-              ></b-spinner>
-            </td>
-          </tr>
-        </tbody>
       </table>
       <b-modal
         id="modal-confirm"
@@ -196,6 +192,16 @@
         <add-relational @cancelNew="cancelNew" />
       </b-modal>
     </div>
+    <div class="d-flex justify-content-end">
+      <b-pagination
+        v-model="currentPage"
+        class="pagination-rounded mt-3"
+        :total-rows="totalData"
+        :per-page="perPage"
+        aria-controls="my-table"
+        @input="handleClick()"
+      ></b-pagination>
+    </div>
   </div>
 </template>
 
@@ -203,10 +209,13 @@
 import Confirmation from '@/components/alert/Confirmation'
 import AddRelational from '@/components/cyberquote/AddRelation'
 import { required } from 'vuelidate/lib/validators'
+import Loading from 'vue-loading-overlay'
+import 'vue-loading-overlay/dist/vue-loading.css'
 export default {
   components: {
     Confirmation,
     AddRelational,
+    Loading,
   },
   data() {
     return {
@@ -227,6 +236,9 @@ export default {
       isLoading: false,
       searchKey: null,
       submitted: false,
+      currentPage: 1,
+      totalData: null,
+      perPage: null,
     }
   },
   validations: {
@@ -243,22 +255,33 @@ export default {
     },
   },
   mounted() {
-    const urlFetchData = `/sub_detail?filterByFormula=AND(FIND("RELATIONAL", {corpus_detail}), NOT({isDeleted}))`
+    const urlFetchData = `/master/relation?page=1`
     this.fetchData(urlFetchData)
   },
   methods: {
+    async handleClick() {
+      let urlFetchData = null
+      if (this.searchKey === null) {
+        urlFetchData = `/master/relation?page=${this.currentPage}`
+      } else {
+        urlFetchData = `/master/relation?page=${this.currentPage}&search=${this.searchKey}`
+      }
+      await this.fetchData(urlFetchData)
+    },
+
     async fetchData(url) {
       this.isLoading = true
-      const resPosTag = await this.$axios.$get(url, {
+      const resRelation = await this.$axios.$get(url, {
         headers: {
-          Authorization: this.$config.API_KEY,
+          Authorization: this.$auth.strategy.token.get(),
         },
       })
-      this.filterData = resPosTag.records.map((obj) => ({
+      this.filterData = resRelation.data.map((obj) => ({
         ...obj,
         isModified: false,
       }))
-      this.totalRows = this.filterData.length
+      this.totalData = resRelation.pagination.total
+      this.perPage = resRelation.pagination.perPage
       this.isLoading = false
     },
 
@@ -267,9 +290,9 @@ export default {
         element.isModified = false
       })
       record.isModified = !record.isModified
-      this.form.desc = record.fields.sub_detail_master_desc
-      this.form.abbreviation = record.fields.sub_detail_master_abbreviation
-      this.form.code = record.fields.sub_detail_master_code
+      this.form.desc = record.description
+      this.form.abbreviation = record.abbreviation
+      this.form.code = record.code
     },
 
     cancel(record) {
@@ -283,27 +306,19 @@ export default {
         console.log(this.$v)
       } else {
         const payLoad = {
-          records: [
-            {
-              id: record.id,
-              fields: {
-                sub_detail_master_abbreviation: this.form.abbreviation,
-                sub_detail_master_desc: this.form.desc,
-                sub_detail_master_code: this.form.code,
-              },
-            },
-          ],
+          abbreviation: this.form.abbreviation,
+          description: this.form.desc,
+          code: this.form.code,
         }
-        await this.$axios.$patch(`/sub_detail`, payLoad, {
+        await this.$axios.$put(`/master/relation/${record.id}`, payLoad, {
           headers: {
-            Authorization: this.$config.API_KEY,
+            Authorization: this.$auth.strategy.token.get(),
           },
         })
         let urlFetchData = null
         if (this.searchKey !== null)
-          urlFetchData = `/sub_detail?filterByFormula=AND(FIND("RELATIONAL", {corpus_detail}), NOT({isDeleted}), FIND(LOWER("${this.searchKey}"),LOWER({sub_detail_master_desc})))`
-        else
-          urlFetchData = `/sub_detail?filterByFormula=AND(FIND("RELATIONAL", {corpus_detail}), NOT({isDeleted}))`
+          urlFetchData = `/master/relation?page=${this.currentPage}&search=${this.searchKey}`
+        else urlFetchData = `/master/relation?page=${this.currentPage}`
         this.fetchData(urlFetchData)
         this.dismissCountDown = this.dismissSecs
         this.errorMessage = 'Updated Successfully'
@@ -327,26 +342,16 @@ export default {
     async confirmation(record) {
       this.$root.$emit('bv::hide::modal', 'modal-confirm')
       this.isLoading = true
-      const payLoad = {
-        records: [
-          {
-            id: record.id,
-            fields: {
-              isDeleted: true,
-            },
-          },
-        ],
-      }
-      await this.$axios.$patch(`/sub_detail`, payLoad, {
+
+      await this.$axios.$delete(`/master/relation/${record.id}`, {
         headers: {
-          Authorization: this.$config.API_KEY,
+          Authorization: this.$auth.strategy.token.get(),
         },
       })
       let urlFetchData = null
       if (this.searchKey !== null)
-        urlFetchData = `/sub_detail?filterByFormula=AND(FIND("RELATIONAL", {corpus_detail}), NOT({isDeleted}), FIND(LOWER("${this.searchKey}"),LOWER({sub_detail_master_desc})))`
-      else
-        urlFetchData = `/sub_detail?filterByFormula=AND(FIND("RELATIONAL", {corpus_detail}), NOT({isDeleted}))`
+        urlFetchData = `/master/relation?page=${this.currentPage}&search=${this.searchKey}`
+      else urlFetchData = `/master/relation?page=${this.currentPage}`
       this.fetchData(urlFetchData)
 
       this.dismissCountDown = this.dismissSecs
@@ -355,12 +360,8 @@ export default {
     },
 
     search() {
-      let urlFetchData = null
-      if (this.searchKey !== null)
-        urlFetchData = `/sub_detail?filterByFormula=AND(FIND("RELATIONAL", {corpus_detail}), NOT({isDeleted}), FIND(LOWER("${this.searchKey}"),LOWER({sub_detail_master_desc})))`
-      else
-        urlFetchData = `/sub_detail?filterByFormula=AND(FIND("RELATIONAL", {corpus_detail}), NOT({isDeleted}))`
-      this.fetchData(urlFetchData)
+      this.currentPage = 1
+      this.handleClick()
     },
 
     newPost() {
