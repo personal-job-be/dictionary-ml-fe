@@ -128,7 +128,7 @@ export default {
           type: 'Bearer',
         },
         user: {
-          property: 'success',
+          property: 'data',
           // autoFetch: true,
         },
         endpoints: {
@@ -137,7 +137,9 @@ export default {
             method: 'post',
           },
           logout: {},
-          user: { url: '/master/postag', method: 'get' },
+          // user: { url: '/master/postag', method: 'get' },
+
+          user: { url: '/auth/profile', method: 'get' },
         },
       },
     },
