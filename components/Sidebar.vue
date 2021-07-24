@@ -263,7 +263,7 @@ export default {
             href="javascript: void(0);"
             class="text-reset dropdown-toggle h5 mt-2 mb-1 d-block"
             data-toggle="dropdown"
-            >Reza Limena</a
+            >{{ $auth.user.fullname }}</a
           >
           <div class="dropdown-menu user-pro-dropdown">
             <!-- item-->
@@ -291,7 +291,7 @@ export default {
             </a>
           </div>
         </div>
-        <p class="text-reset">Admin Head</p>
+        <p class="text-reset">{{ $auth.user.department.department_name }}</p>
       </div>
 
       <!--- Sidemenu -->

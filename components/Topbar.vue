@@ -403,7 +403,7 @@ export default {
                 class="rounded-circle"
               />
               <span class="pro-user-name ml-1">
-                {{ $t('navbar.dropdown.name.text') }}
+                {{ $auth.user.fullname }}
                 <i class="mdi mdi-chevron-down"></i>
               </span>
             </div>

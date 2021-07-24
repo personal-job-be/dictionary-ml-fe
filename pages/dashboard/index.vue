@@ -16,7 +16,9 @@
 
 <script>
 export default {
-  mounted() {},
+  mounted() {
+    console.log(this.$auth.user)
+  },
 }
 </script>
 
