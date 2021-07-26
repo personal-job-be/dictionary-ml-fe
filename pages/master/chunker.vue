@@ -340,6 +340,7 @@ export default {
           abbreviation: this.form.abbreviation,
           description: this.form.desc,
           code: this.form.code,
+          color: this.form.color,
         }
         await this.$axios.$put(`/master/chunker/${record.id}`, payLoad, {
           headers: {
