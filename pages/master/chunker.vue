@@ -6,6 +6,9 @@
       :is-full-page="true"
       loader="bars"
       color="#5b315f"
+      :opacity="0"
+      :width="64"
+      :height="64"
     />
     <b-alert
       :show="dismissCountDown"

@@ -109,7 +109,7 @@ $card-overlay-bg: rgba(#ffffff, 0.8);
 $input-light-bg: #f3f7f9;
 
 // Shadow
-$shadow-sm: 0 0.75rem 6rem rgba(56, 65, 74, 0.03);
+$shadow-sm: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 $shadow: 0 0 35px 0 rgba(154, 161, 171, 0.15);
 $shadow-lg: 0 0 45px 0 rgba(0, 0, 0, 0.12);
 
@@ -971,7 +971,7 @@ $jumbotron-bg: lighten($gray-300, 5%);
 $card-spacer-y: 1rem;
 $card-spacer-x: 1.5rem;
 $card-border-width: 1px;
-$card-border-radius: 0.25rem;
+$card-border-radius: 1rem;
 $card-border-color: lighten($gray-300, 3%);
 $card-inner-border-radius: subtract($card-border-radius, $card-border-width);
 $card-cap-bg: lighten($gray-300, 5%);
