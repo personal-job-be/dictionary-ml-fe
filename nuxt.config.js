@@ -123,7 +123,7 @@ export default {
     strategies: {
       local: {
         token: {
-          property: 'data.token',
+          property: '',
           required: true,
           type: 'Bearer',
         },

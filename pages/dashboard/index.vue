@@ -104,8 +104,9 @@ export default {
             Authorization: this.$auth.strategy.token.get(),
           },
         })
-        if (resLitigation.data.length > 0)
-          this.litigation = resLitigation.data.reduce((data) => data)
+        // if (resLitigation.data.length > 0)
+        // this.litigation = resLitigation.data.reduce((data) => data)
+        this.litigation = resLitigation.data
         console.log(this.litigation)
       } catch (error) {}
     },
