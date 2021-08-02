@@ -39,6 +39,7 @@ export default {
     }
   },
   mounted() {
+    console.log('topbar', this.$auth.user)
     this.value = this.languages.find((x) => x.language === this.$i18n.locale)
     this.text = this.value.title
     this.flag = this.value.flag
