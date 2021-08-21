@@ -231,7 +231,7 @@ export default {
       <nuxt-link to="/" class="logo logo-dark text-center">
         <span class="logo-sm">
           <img src="~/assets/images/logo-sm-dark.png" alt height="24" />
-          <!-- <span class="logo-lg-text-light">Minton</span> -->
+          <!-- <span class="logo-lg-text-light">Cyberquote</span> -->
         </span>
         <span class="logo-lg">
           <img src="~/assets/images/logo-dark.png" alt height="20" />
@@ -268,24 +268,6 @@ export default {
           <div class="dropdown-menu user-pro-dropdown">
             <!-- item-->
             <a href="javascript:void(0);" class="dropdown-item notify-item">
-              <i class="fe-user mr-1"></i>
-              <span>My Account</span>
-            </a>
-
-            <!-- item-->
-            <a href="javascript:void(0);" class="dropdown-item notify-item">
-              <i class="fe-settings mr-1"></i>
-              <span>Settings</span>
-            </a>
-
-            <!-- item-->
-            <a href="javascript:void(0);" class="dropdown-item notify-item">
-              <i class="fe-lock mr-1"></i>
-              <span>Lock Screen</span>
-            </a>
-
-            <!-- item-->
-            <a href="javascript:void(0);" class="dropdown-item notify-item">
               <i class="fe-log-out mr-1"></i>
               <span>Logout</span>
             </a>
@@ -299,7 +281,7 @@ export default {
         <!-- Left Menu Start -->
         <ul id="side-menu" class="list-unstyled">
           <template v-for="item in menuItems">
-            <li v-if="item.isTitle" :key="item.id" class="menu-title">
+            <li v-if="item.isTitle" :key="item.id" class="menu-title ml-3 mr-3">
               {{ $t(item.label) }}
             </li>
             <li v-if="!item.isTitle && !item.isLayout" :key="item.id">

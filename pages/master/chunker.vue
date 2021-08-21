@@ -314,7 +314,7 @@ export default {
       }))
       this.totalData = resChunker.pagination.total
       this.perPage = resChunker.pagination.perPage
-      console.log(this.filterData)
+
       this.isLoading = false
     },
 

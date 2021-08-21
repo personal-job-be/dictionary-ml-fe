@@ -1,4 +1,4 @@
-// 
+//
 // type.scss
 //
 
@@ -14,79 +14,155 @@ h3,
 h4,
 h5,
 h6 {
-    margin: 10px 0;
-    font-family: $font-family-secondary;
-    color: $text-color-h;
+  margin: 10px 0;
+  font-family: $font-family-secondary;
+  color: $text-color-h;
 }
-
 
 // Font sizes (Custom)
 .font-10 {
-    font-size: 10px !important;
+  font-size: 10px !important;
 }
 
 .font-11 {
-    font-size: 11px !important;
+  font-size: 11px !important;
 }
 
 .font-12 {
-    font-size: 12px !important;
+  font-size: 12px !important;
 }
 
 .font-13 {
-    font-size: 13px !important;
+  font-size: 13px !important;
 }
 
 .font-14 {
-    font-size: 14px !important;
+  font-size: 14px !important;
 }
 
 .font-15 {
-    font-size: 15px !important;
+  font-size: 15px !important;
 }
 
 .font-16 {
-    font-size: 16px !important;
+  font-size: 16px !important;
 }
 
 .font-17 {
-    font-size: 17px !important;
+  font-size: 17px !important;
 }
 
 .font-18 {
-    font-size: 18px !important;
+  font-size: 18px !important;
 }
 
 .font-19 {
-    font-size: 19px !important;
+  font-size: 19px !important;
 }
 
 .font-20 {
-    font-size: 20px !important;
+  font-size: 20px !important;
 }
 
 .font-22 {
-    font-size: 22px !important;
+  font-size: 22px !important;
 }
 
 .font-24 {
-    font-size: 24px !important;
+  font-size: 24px !important;
 }
 
 .font-26 {
-    font-size: 26px !important;
+  font-size: 26px !important;
 }
 
 .font-28 {
-    font-size: 28px !important;
+  font-size: 28px !important;
 }
 
 // Font Weight
 
 .font-weight-medium {
-    font-weight: $font-weight-medium;
+  font-weight: $font-weight-medium;
 }
 
 .font-weight-semibold {
-    font-weight: $font-weight-semibold;
+  font-weight: $font-weight-semibold;
+}
+
+.large-heading-1 {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 38px;
+  line-height: 46px;
+}
+
+.large-heading-2 {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 40px;
+}
+
+.heading-1 {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 32px;
+}
+
+.heading-2 {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 28px;
+}
+
+.sub-heading-reguler {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.sub-heading-medium {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.sub-heading-strong {
+  font-style: normal;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.body-reguler {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.body-medium {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.body-strong {
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.footnote-reguler {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 20px;
 }

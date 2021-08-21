@@ -18,9 +18,6 @@ export default {
       <!-- end container -->
     </div>
     <!-- end page -->
-    <footer class="footer footer-alt">
-      {{ new Date().getFullYear() }} &copy; Minton theme by
-      <a href="">Themesbrand</a>
-    </footer>
+    <footer class="footer footer-alt"></footer>
   </div>
 </template>

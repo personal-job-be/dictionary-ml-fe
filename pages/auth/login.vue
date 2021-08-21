@@ -1,21 +1,16 @@
 <template>
-  <b-row class="d-flex justify-content-center align-items-center left-side">
+  <b-row class="d-flex align-items-center left-side">
+    <b-col md="2"></b-col>
     <b-col md="7">
       <div class="card-body">
-        <div class="text-center w-80 m-auto">
-          <div class="auth-logo">
-            <span class="logo-lg font-primary">
-              <h1 class="text-primary">Login</h1>
-            </span>
+        <div>
+          <div class="large-heading-2 text-primary">Login</div>
+          <div class="text-secondary sub-heading-reguler">
+            Financial Training & Information Technology
           </div>
-          <p class="text-black-board mb-4 mt-3 font-14">
-            With more than 20 years of experience in serving the investing
-            public <br />
-            and the financial services industry
-          </p>
         </div>
 
-        <form action="#" @submit.prevent="tryToLogIn">
+        <form action="#" class="mt-3" @submit.prevent="tryToLogIn">
           <b-alert
             :show="dismissCountDown"
             dismissible
@@ -26,7 +21,7 @@
             {{ errorMessage }}
           </b-alert>
 
-          <div class="form-group mb-4">
+          <div class="form-group mb-3">
             <label class="text-dark" for="userName">User Name</label>
             <input
               id="userName"
@@ -74,7 +69,7 @@
             </div>
           </div>
 
-          <div class="pr-5 pl-5 pt-3">
+          <div class="pt-3">
             <div class="form-group text-center">
               <button
                 class="
