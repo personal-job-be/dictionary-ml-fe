@@ -2,7 +2,13 @@
 /**
  * Footer Component
  */
-export default {}
+export default {
+  methods: {
+    sosmed() {
+      window.open('https://api.whatsapp.com/send?phone=+62818763058&text=Hi')
+    },
+  },
+}
 </script>
 
 <template>
@@ -13,7 +19,7 @@ export default {}
         <div class="col-md-7 d-flex justify-content-between">
           <div>
             {{ new Date().getFullYear() }} &copy;
-            <a href="https://rezalimena.com" target="_blank">Reza Limena</a>
+            <span style="cursor: pointer" @click="sosmed">Reza Limena</span>
           </div>
           <a href="https://rezalimena.com" target="_blank"
             >www.rezalimena.com</a
@@ -21,9 +27,7 @@ export default {}
         </div>
         <div class="col-md-5">
           <div class="text-md-right footer-links d-none d-sm-block">
-            <a href="javascript:void(0);">About Us</a>
-            <a href="javascript:void(0);">Help</a>
-            <a href="javascript:void(0);">Contact Us</a>
+            <span style="cursor: pointer" @click="sosmed">Contact Us</span>
           </div>
         </div>
       </div>

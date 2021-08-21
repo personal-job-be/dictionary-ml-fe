@@ -672,7 +672,7 @@ export default {
               </button>
 
               <a
-                href="https://wrapbootstrap.com/theme/minton-admin-dashboard-landing-template-WB0858DB6?ref=themesbrand"
+                href="https://wrapbootstrap.com/theme/Cyberquote-admin-dashboard-landing-template-WB0858DB6?ref=themesbrand"
                 class="btn btn-danger btn-block mt-2"
                 target="_blank"
                 ><i class="mdi mdi-basket mr-1"></i> Purchase Now</a

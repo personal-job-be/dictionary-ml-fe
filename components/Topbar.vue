@@ -416,38 +416,10 @@ export default {
             </h6>
           </b-dropdown-header>
 
-          <b-dropdown-item href="#">
-            <i class="remixicon-account-circle-line"></i>
-            <span>{{ $t('navbar.dropdown.name.list.account') }}</span>
-          </b-dropdown-item>
-
-          <b-dropdown-item href="#">
-            <i class="remixicon-settings-3-line"></i>
-            <span>{{ $t('navbar.dropdown.name.list.settings') }}</span>
-          </b-dropdown-item>
-          <!-- 
-          <b-dropdown-item href="#">
-            <i class="remixicon-wallet-line"></i>
-            <span>
-              {{ $t('navbar.dropdown.name.list.mywallet') }}
-              <span class="badge badge-success float-right">3</span>
-            </span>
-          </b-dropdown-item> -->
-
-          <b-dropdown-item href="#">
-            <i class="remixicon-lock-line"></i>
-            <span>{{ $t('navbar.dropdown.name.list.lockscreen') }}</span>
-          </b-dropdown-item>
-
-          <b-dropdown-divider></b-dropdown-divider>
-          <a
-            class="dropdown-item"
-            href="jvascript: void(0);"
-            @click="logoutUser"
-          >
+          <div class="dropdown-item" @click="logoutUser">
             <i class="fe-log-out mr-1"></i>
             <span>{{ $t('navbar.dropdown.name.list.logout') }}</span>
-          </a>
+          </div>
         </b-nav-item-dropdown>
 
         <!-- <li class="dropdown notification-list">
@@ -466,7 +438,7 @@ export default {
         <nuxt-link to="/" class="logo logo-dark text-center">
           <span class="logo-sm">
             <img src="~/assets/images/logo-sm-dark.png" alt height="24" />
-            <!-- <span class="logo-lg-text-light">Minton</span> -->
+            <!-- <span class="logo-lg-text-light">Cyberquote</span> -->
           </span>
           <span class="logo-lg">
             <img src="~/assets/images/logo-dark.png" alt height="20" />

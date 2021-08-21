@@ -1,4 +1,4 @@
-# Minton - Nuxtjs Responsive Admin Dashboard Template
+# Cyberquote - Nuxtjs Responsive Admin Dashboard Template
 
 ## Build Setup
 

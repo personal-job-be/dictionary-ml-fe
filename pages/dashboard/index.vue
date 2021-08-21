@@ -1,46 +1,58 @@
 <template>
   <div>
     <div v-if="!inProcess">
-      <b-tabs v-model="tabActive" nav-class="nav-tabs nav-bordered mt-3">
-        <b-tab title="New" active>
-          <b-button
-            class="btn-rounded drop-shadow btn-gradient"
-            @click="getLitigation"
-          >
-            <i class="fe-plus"></i> New Litigation
-          </b-button>
-          <b-row class="mt-4">
-            <b-col md="12" lg="10" xl="6">
-              <b-row align-v="center">
-                <b-col md="2" class="font-weight-bold font-16">
-                  Case No :
-                </b-col>
-                <b-col>
-                  <div
-                    v-if="litigation !== null"
-                    class="ml-2 font-weight-bold text-black"
-                  >
-                    {{ litigation.case_no }}
-                  </div>
-                </b-col>
-                <b-col md="3">
-                  <b-button
-                    variant="success"
-                    class="btn-rounded drop-shadow"
-                    @click="process"
-                  >
-                    Work on it
-                  </b-button>
+      <b-card>
+        <b-card-body>
+          <b-tabs v-model="tabActive" nav-class="nav-tabs nav-bordered">
+            <b-tab title="New" active>
+              <b-button
+                class="btn-rounded drop-shadow btn-gradient"
+                @click="getLitigation"
+              >
+                <i class="fe-plus"></i> New Litigation
+              </b-button>
+              <b-row class="mt-4">
+                <b-col md="12" lg="10" xl="6">
+                  <b-row align-v="center">
+                    <b-col md="3" class="font-weight-bold font-16">
+                      Case No :
+                    </b-col>
+                    <b-col>
+                      <div
+                        v-if="litigation !== null"
+                        class="ml-2 font-weight-bold text-black"
+                      >
+                        {{ newLitigation }}
+                      </div>
+                    </b-col>
+                    <b-col md="3">
+                      <b-button
+                        class="btn-gradient btn-rounded drop-shadow"
+                        @click="process"
+                      >
+                        Start
+                      </b-button>
+                    </b-col>
+                  </b-row>
                 </b-col>
               </b-row>
-            </b-col>
-          </b-row>
-        </b-tab>
-        <b-tab title="Draft">
-          <h1>Draft Litigation</h1>
-        </b-tab>
-      </b-tabs>
+            </b-tab>
+            <b-tab title="Litigation List">
+              <draft-table
+                @draftProcess="draftProcess"
+                @finalProcess="finalProcess"
+              />
+            </b-tab>
+          </b-tabs>
+        </b-card-body>
+      </b-card>
     </div>
+
+    <!-- <b-tabs v-model="tabActive" nav-class="nav-tabs nav-bordered mt-3">
+        <b-tab title="New" active> </b-tab>
+        <b-tab> </b-tab>
+      </b-tabs>
+    </div> -->
     <div v-else>
       <!-- corpusResult temporary waiting for API -->
       <pos-tag
@@ -68,7 +80,9 @@
       />
       <all-table
         v-else-if="step === 4"
+        :litigation="litigation"
         :corpus-data="corpusResult"
+        :is-final="isFinal"
         @backProcess="backProcess"
         @backDashboard="backDashboard"
       />
@@ -81,15 +95,18 @@ import PosTag from '@/components/cyberquote/process/PosTag.vue'
 import Chunk from '@/components/cyberquote/process/Chunk.vue'
 import Relation from '@/components/cyberquote/process/Relation.vue'
 import AllTable from '@/components/cyberquote/table/All-Table.vue'
+import DraftTable from '@/components/cyberquote/table/Draft-Table.vue'
 export default {
-  components: { PosTag, Chunk, Relation, AllTable },
+  components: { PosTag, Chunk, Relation, AllTable, DraftTable },
   data() {
     return {
       litigation: null,
+      newLitigation: null,
       inProcess: false,
       tabActive: 0,
       step: 0,
       corpusResult: null,
+      isFinal: false,
     }
   },
   async mounted() {},
@@ -107,20 +124,37 @@ export default {
         // if (resLitigation.data.length > 0)
         // this.litigation = resLitigation.data.reduce((data) => data)
         this.litigation = resLitigation.data
+        this.newLitigation = this.litigation.case_no
         console.log(this.litigation)
-      } catch (error) {}
+      } catch (error) {
+        console.log(error.response.data)
+      }
     },
     process() {
+      this.newLitigation = null
       this.step = 1
       this.inProcess = true
     },
+    draftProcess(record) {
+      this.litigation = record
+      console.log(this.litigation)
+      this.process()
+    },
     nextProcess(corpus) {
+      this.isFinal = false
       this.step++
       this.corpusResult = corpus
     },
     backProcess(corpus) {
+      this.isFinal = false
       this.step--
       this.corpusResult = corpus
+    },
+    finalProcess(record) {
+      this.isFinal = false
+      this.litigation = record
+      this.step = 1
+      this.inProcess = true
     },
   },
 }
