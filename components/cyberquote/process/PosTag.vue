@@ -184,6 +184,7 @@ export default {
       this.isModified = false
       this.posTags = await this.fetchPosTag()
       this.corpusesTag = await this.fetchCorpusTag()
+      console.log(this.corpusesTag)
       this.isFetched = true
       this.isLoading = false
     } catch (error) {
@@ -201,39 +202,37 @@ export default {
     },
     async fetchCorpusTag() {
       // temporary waiting for API
-      if (this.corpusData === null) {
-        const resCorpusWords = await this.$axios.$get(
-          `/corpus/${this.litigation.litigation_id}/words`,
-          {
-            headers: {
-              Authorization: this.$auth.strategy.token.get(),
-            },
-          }
+      const resCorpusWords = await this.$axios.$get(
+        `/corpus/${this.litigation.litigation_id}/words`,
+        {
+          headers: {
+            Authorization: this.$auth.strategy.token.get(),
+          },
+        }
+      )
+      console.log('resCorpus', resCorpusWords)
+      const resCorpusTag = await this.$axios.$get(
+        `/corpus/${this.litigation.litigation_id}/postag`,
+        {
+          headers: {
+            Authorization: this.$auth.strategy.token.get(),
+          },
+        }
+      )
+      resCorpusWords.data.forEach((data) => {
+        let resFilterTag = resCorpusTag.data.filter(
+          (corpusTag) => corpusTag.corpus_index === data.corpus_index
         )
-        const resCorpusTag = await this.$axios.$get(
-          `/corpus/${this.litigation.litigation_id}/postag`,
-          {
-            headers: {
-              Authorization: this.$auth.strategy.token.get(),
-            },
-          }
-        )
-        resCorpusWords.data.forEach((data) => {
-          let resFilterTag = resCorpusTag.data.filter(
-            (corpusTag) => corpusTag.corpus_index === data.corpus_index
-          )
-          if (resFilterTag.length > 0) {
-            resFilterTag = resFilterTag.reduce((corpusTag) => corpusTag)
-            data.postag_id = resFilterTag.postag_id
-            data.postag = resFilterTag.postag
-          } else {
-            data.postag_id = null
-            data.postag = null
-          }
-        })
-        return resCorpusWords.data
-      }
-      return this.corpusData
+        if (resFilterTag.length > 0) {
+          resFilterTag = resFilterTag.reduce((corpusTag) => corpusTag)
+          data.postag_id = resFilterTag.postag_id
+          data.postag = resFilterTag.postag
+        } else {
+          data.postag_id = null
+          data.postag = null
+        }
+      })
+      return resCorpusWords.data
     },
     selectTag() {
       if (this.selectedWords.length > 0 && this.selectedPos !== '-1') {
