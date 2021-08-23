@@ -104,7 +104,9 @@
                 </span>
               </div>
               <hr />
-              <div class="sub-heading-strong mt-4 text-primary">Corpus</div>
+              <div class="sub-heading-strong mt-4 text-primary">
+                Corpus {{ litigation.case_no }}
+              </div>
               <span
                 v-for="(corpusChunk, index) in corpusesChunk"
                 :key="index"

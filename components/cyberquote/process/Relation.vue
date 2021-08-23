@@ -147,7 +147,9 @@
                 >
               </div>
               <hr />
-              <div class="sub-heading-strong mt-4 text-primary">Corpus</div>
+              <div class="sub-heading-strong mt-4 text-primary">
+                Corpus {{ litigation.case_no }}
+              </div>
               <span
                 v-for="(corpusRelation, index) in corpusesRelation"
                 :key="index"

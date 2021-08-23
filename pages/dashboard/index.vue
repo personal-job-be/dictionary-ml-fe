@@ -11,7 +11,17 @@
               >
                 <i class="fe-plus"></i> New Litigation
               </b-button>
-              <b-row class="mt-4">
+              <b-alert
+                :show="dismissCountDown"
+                dismissible
+                fade
+                :variant="variant"
+                class="mt-2"
+                @dismiss-count-down="countDownChanged"
+              >
+                {{ errorMessage }}
+              </b-alert>
+              <b-row class="mt-2">
                 <b-col md="12" lg="10" xl="6">
                   <b-row align-v="center">
                     <b-col md="3" class="font-weight-bold font-16">
@@ -107,9 +117,14 @@ export default {
       step: 0,
       corpusResult: null,
       isFinal: false,
+      errorMessage: null,
+      dismissSecs: 3,
+      dismissCountDown: 0,
     }
   },
-  async mounted() {},
+  mounted() {
+    this.newLitigation = null
+  },
   methods: {
     backDashboard() {
       this.inProcess = false
@@ -127,8 +142,14 @@ export default {
         this.newLitigation = this.litigation.case_no
         console.log(this.litigation)
       } catch (error) {
-        console.log(error.response.data)
+        this.dismissCountDown = this.dismissSecs
+        this.errorMessage = error.response.data.message
+        this.variant = 'danger'
+        console.log(error.response.data.message)
       }
+    },
+    countDownChanged(dismissCountDown) {
+      this.dismissCountDown = dismissCountDown
     },
     process() {
       this.newLitigation = null

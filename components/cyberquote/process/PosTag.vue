@@ -89,7 +89,9 @@
                 >
               </div>
               <hr />
-              <div class="sub-heading-strong mt-4 text-primary">Corpus</div>
+              <div class="sub-heading-strong mt-4 text-primary">
+                Corpus {{ litigation.case_no }}
+              </div>
               <span v-for="(corpusTag, index) in corpusesTag" :key="index">
                 <b-tooltip :target="`corpusTag-${index}`"
                   >Pos Tag : {{ corpusTag.postag }}</b-tooltip
@@ -184,7 +186,7 @@ export default {
       this.isModified = false
       this.posTags = await this.fetchPosTag()
       this.corpusesTag = await this.fetchCorpusTag()
-      console.log(this.corpusesTag)
+      console.log(this.litigation)
       this.isFetched = true
       this.isLoading = false
     } catch (error) {
