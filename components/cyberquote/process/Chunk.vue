@@ -335,6 +335,7 @@ export default {
     },
 
     removeChunk(chunk) {
+      this.isModified = true
       console.log(this.relation)
       console.log(chunk)
       // check if chunk has relation
