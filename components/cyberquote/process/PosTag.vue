@@ -92,26 +92,81 @@
               <div class="sub-heading-strong mt-4 text-primary">
                 Corpus {{ litigation.case_no }}
               </div>
-              <span v-for="(corpusTag, index) in corpusesTag" :key="index">
-                <b-tooltip :target="`corpusTag-${index}`"
+              <span
+                v-for="(corpusTag, index) in corpusesTag"
+                :key="index"
+                class="mr-2"
+              >
+                <!-- <b-tooltip :target="`corpusTag-${index}`"
                   >Pos Tag : {{ corpusTag.postag }}</b-tooltip
+                > -->
+                <!-- <span class=""> -->
+                <div
+                  class="btn-group mt-3"
+                  role="group"
+                  aria-label="Basic example"
                 >
-                <b-badge
+                  <button
+                    type="button"
+                    :class="[
+                      corpusTag.postag !== null
+                        ? 'pos-tagged'
+                        : corpusTag.isSelected
+                        ? 'selected-tag'
+                        : 'un-pos-tag  ',
+                      'text-primary hand-cursor font-14 p-1',
+                    ]"
+                    @click="selectWord(corpusTag)"
+                  >
+                    {{ corpusTag.words }}
+                  </button>
+                  <button
+                    v-if="corpusTag.postag !== null"
+                    type="button"
+                    class="bg-primary text-white p-1"
+                  >
+                    {{ corpusTag.postag }}
+                  </button>
+                  <b-button
+                    v-if="corpusTag.postag !== null"
+                    class="pos-tagged semi-rounded"
+                    @click="removeTag(corpusTag)"
+                  >
+                    <i
+                      class="fe-trash-2 font-weight-bold font-12 text-primary"
+                    />
+                  </b-button>
+                </div>
+                <!-- <b-badge
                   :id="`corpusTag-${index}`"
                   :class="[
-                    corpusTag.postag !== null ? 'pos-tagged' : 'un-pos-tag  ',
-                    'mr-2 p-1 mt-1 text-primary hand-cursor',
+                    corpusTag.postag !== null
+                      ? 'pos-tagged'
+                      : corpusTag.isSelected
+                      ? 'selected-tag'
+                      : 'un-pos-tag  ',
+                    'mr-0 p-2 mt-3 text-primary hand-cursor',
                   ]"
-                  pill
                   ><span class="font-12" @click="selectWord(corpusTag)">
                     {{ corpusTag.words }}
                   </span>
-                  <i
+                  <span
                     v-if="corpusTag.postag !== null"
+                    class="font-12 bg-primary text-white text-center p-2 ml-1"
+                  >
+                    {{ corpusTag.postag }}
+                  </span>
+                  <i
                     class="fe-trash-2 font-weight-bold font-12 p-1"
                     @click="removeTag(corpusTag)"
                   />
                 </b-badge>
+                <b-bagde
+                  v-if="corpusTag.postag !== null"
+                  class="ml-0 pos-tagged"
+                >
+                </b-bagde> -->
+                <!-- </span> -->
               </span>
             </b-tab>
             <b-tab title="Result">
@@ -195,56 +250,77 @@ export default {
   },
   methods: {
     async fetchPosTag() {
-      const resPosTag = await this.$axios.$get(`/master/postag/all`, {
-        headers: {
-          Authorization: this.$auth.strategy.token.get(),
-        },
-      })
-      return resPosTag.data
+      try {
+        const resPosTag = await this.$axios.$get(`/master/postag/all`, {
+          headers: {
+            Authorization: this.$auth.strategy.token.get(),
+          },
+        })
+        return resPosTag.data
+      } catch (error) {
+        if (error.response !== undefined) {
+          this.dismissCountDown = this.dismissSecs
+          this.errorMessage = error.response.data
+          this.variant = 'danger'
+        }
+      }
     },
     async fetchCorpusTag() {
-      // temporary waiting for API
-      const resCorpusWords = await this.$axios.$get(
-        `/corpus/${this.litigation.litigation_id}/words`,
-        {
-          headers: {
-            Authorization: this.$auth.strategy.token.get(),
-          },
-        }
-      )
-      console.log('resCorpus', resCorpusWords)
-      const resCorpusTag = await this.$axios.$get(
-        `/corpus/${this.litigation.litigation_id}/postag`,
-        {
-          headers: {
-            Authorization: this.$auth.strategy.token.get(),
-          },
-        }
-      )
-      resCorpusWords.data.forEach((data) => {
-        let resFilterTag = resCorpusTag.data.filter(
-          (corpusTag) => corpusTag.corpus_index === data.corpus_index
+      try {
+        // temporary waiting for API
+        const resCorpusWords = await this.$axios.$get(
+          `/corpus/${this.litigation.litigation_id}/words`,
+          {
+            headers: {
+              Authorization: this.$auth.strategy.token.get(),
+            },
+          }
         )
-        if (resFilterTag.length > 0) {
-          resFilterTag = resFilterTag.reduce((corpusTag) => corpusTag)
-          data.postag_id = resFilterTag.postag_id
-          data.postag = resFilterTag.postag
-        } else {
-          data.postag_id = null
-          data.postag = null
+        console.log('resCorpus', resCorpusWords)
+        const resCorpusTag = await this.$axios.$get(
+          `/corpus/${this.litigation.litigation_id}/postag`,
+          {
+            headers: {
+              Authorization: this.$auth.strategy.token.get(),
+            },
+          }
+        )
+        resCorpusWords.data.forEach((data) => {
+          let resFilterTag = resCorpusTag.data.filter(
+            (corpusTag) => corpusTag.corpus_index === data.corpus_index
+          )
+          if (resFilterTag.length > 0) {
+            resFilterTag = resFilterTag.reduce((corpusTag) => corpusTag)
+            data.postag_id = resFilterTag.postag_id
+            data.postag = resFilterTag.postag
+            data.isSelected = false
+          } else {
+            data.postag_id = null
+            data.postag = null
+            data.isSelected = false
+          }
+        })
+        console.log(resCorpusWords)
+        return resCorpusWords.data
+      } catch (error) {
+        if (error.response !== undefined) {
+          this.dismissCountDown = this.dismissSecs
+          this.errorMessage = error.response.data
+          this.variant = 'danger'
         }
-      })
-      return resCorpusWords.data
+      }
     },
-    selectTag() {
+    async selectTag() {
       if (this.selectedWords.length > 0 && this.selectedPos !== '-1') {
         this.selectedWords.forEach((data) => {
           data.postag = this.selectedPos.code
           data.postag_id = this.selectedPos.id
+          data.isSelected = false
         })
         this.isModified = true
         this.clearTag()
         this.$refs.tagTable.syncData()
+        await this.savingTag()
       } else if (this.selectedWords.length === 0) {
         this.dismissCountDown = this.dismissSecs
         this.errorMessage = `Please select a word`
@@ -255,7 +331,8 @@ export default {
         this.variant = 'danger'
       }
     },
-    backDashboard() {
+    async backDashboard() {
+      if (this.isModified) await this.savingTag()
       this.$emit('backDashboard')
     },
     selectWord(word) {
@@ -266,17 +343,20 @@ export default {
         this.variant = 'danger'
         return
       }
+      word.isSelected = true
       this.selectedWords.push(word)
     },
     countDownChanged(dismissCountDown) {
       this.dismissCountDown = dismissCountDown
     },
     removeTag(word) {
+      this.isModified = true
       word.postag = null
       word.postag_id = null
       this.$refs.tagTable.syncData()
     },
     removeSelected(word) {
+      word.isSelected = false
       const index = this.selectedWords.indexOf(word)
       this.selectedWords.splice(index, 1)
     },
@@ -291,48 +371,7 @@ export default {
         this.variant = 'danger'
         return
       }
-      if (this.isModified) {
-        const resUniquePosTagId = this.corpusesTag
-          .reduce((unique, o) => {
-            if (!unique.some((obj) => obj.postag_id === o.postag_id)) {
-              unique.push(o)
-            }
-            return unique
-          }, [])
-          .map((data) => data.postag_id)
-
-        const resultTagging = []
-        resUniquePosTagId.forEach((data) => {
-          const singlePosTag = {
-            postag_id: data,
-            corpus_index: this.corpusesTag
-              .filter((corpus) => corpus.postag_id === data)
-              .map((corpus) => corpus.corpus_index),
-          }
-          resultTagging.push(singlePosTag)
-        })
-
-        try {
-          await this.$axios.$post(
-            `/corpus/${this.litigation.litigation_id}/postag`,
-            {
-              data: resultTagging,
-            },
-            {
-              headers: {
-                Authorization: this.$auth.strategy.token.get(),
-              },
-            }
-          )
-          this.dismissCountDown = this.dismissSecs
-          this.errorMessage = 'Postag Words saved'
-          this.variant = 'success'
-        } catch (error) {
-          this.dismissCountDown = this.dismissSecs
-          this.errorMessage = error.response.data
-          this.variant = 'danger'
-        }
-      }
+      if (this.isModified) await this.savingTag()
       this.$emit('nextProcess', this.corpusesTag)
       // const valid = this.corpusesTag.filter((data) => data.postag === null)
       // if (valid.length > 0) {
@@ -343,6 +382,48 @@ export default {
       // }
       // this.$emit('nextProcess', this.corpusesTag)
     },
+    async savingTag() {
+      const resUniquePosTagId = this.corpusesTag
+        .reduce((unique, o) => {
+          if (!unique.some((obj) => obj.postag_id === o.postag_id)) {
+            unique.push(o)
+          }
+          return unique
+        }, [])
+        .map((data) => data.postag_id)
+
+      let resultTagging = []
+      resUniquePosTagId.forEach((data) => {
+        const singlePosTag = {
+          postag_id: data,
+          corpus_index: this.corpusesTag
+            .filter((corpus) => corpus.postag_id === data)
+            .map((corpus) => corpus.corpus_index),
+        }
+        resultTagging.push(singlePosTag)
+      })
+      resultTagging = resultTagging.filter((tag) => tag.postag_id !== null)
+      try {
+        await this.$axios.$post(
+          `/corpus/${this.litigation.litigation_id}/postag`,
+          {
+            data: resultTagging,
+          },
+          {
+            headers: {
+              Authorization: this.$auth.strategy.token.get(),
+            },
+          }
+        )
+        this.dismissCountDown = this.dismissSecs
+        this.errorMessage = 'Postag Words saved'
+        this.variant = 'success'
+      } catch (error) {
+        this.dismissCountDown = this.dismissSecs
+        this.errorMessage = error.response.data
+        this.variant = 'danger'
+      }
+    },
   },
 }
 </script>
@@ -350,9 +431,15 @@ export default {
 <style lang="scss" scoped>
 .un-pos-tag {
   background-color: #f5f5f5;
+  border: none;
 }
 .pos-tagged {
   background-color: #ffe08a;
+  border: none;
+}
+.selected-tag {
+  background-color: #b5b6b0;
+  border: none;
 }
 .hand-cursor {
   cursor: pointer;

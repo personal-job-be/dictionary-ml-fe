@@ -55,15 +55,28 @@
               >
                 Start
               </button>
-              <b-button
-                v-if="litigation.status === 'final'"
-                variant="outline-primary"
-                pill
-                class="mr-2 drop-shadow"
-                @click="finalProcess(litigation)"
-              >
-                Edit
-              </b-button>
+              <div v-if="litigation.status === 'final'" class="d-flex">
+                <b-button
+                  variant="outline-primary"
+                  pill
+                  class="mr-2 drop-shadow"
+                  @click="draftProcess(litigation)"
+                >
+                  Edit
+                </b-button>
+                <b-button
+                  pill
+                  class="
+                    btn btn-gradient btn-block
+                    font-16
+                    btn-rounded
+                    text-white
+                  "
+                  @click="finalProcess(litigation)"
+                >
+                  View
+                </b-button>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -125,7 +138,9 @@ export default {
         this.perPage = resLitigation.pagination.perPage
         console.log(resLitigation)
       } catch (error) {
-        console.log(error.response.data)
+        this.dismissCountDown = this.dismissSecs
+        this.errorMessage = error.response.data
+        this.variant = 'danger'
       }
     },
     draftProcess(record) {

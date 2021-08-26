@@ -158,7 +158,6 @@ export default {
     },
     draftProcess(record) {
       this.litigation = record
-      console.log(this.litigation)
       this.process()
     },
     nextProcess(corpus) {
@@ -172,9 +171,9 @@ export default {
       this.corpusResult = corpus
     },
     finalProcess(record) {
-      this.isFinal = false
+      this.isFinal = true
       this.litigation = record
-      this.step = 1
+      this.step = 4
       this.inProcess = true
     },
   },

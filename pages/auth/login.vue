@@ -149,7 +149,7 @@ export default {
           })
         } catch (error) {
           this.dismissCountDown = this.dismissSecs
-          this.errorMessage = "Your account doesn't exist"
+          this.errorMessage = error.response.data
         }
 
         // this.$router.push('/dashboard')
