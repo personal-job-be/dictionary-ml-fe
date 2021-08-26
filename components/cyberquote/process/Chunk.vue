@@ -59,13 +59,13 @@
               </b-alert>
               <span>
                 <b-button
-                  v-for="(chunk, index) in chunks"
+                  v-for="(abbreviation, index) in abbreviations"
                   :key="index"
                   pill
                   class="text-primary mr-2 mt-2"
-                  :style="`background-color:${chunk.color}; border: none;`"
-                  @click="selectChunk(chunk)"
-                  >{{ chunk.code }}</b-button
+                  :style="`background-color:${abbreviation.color}; border: none;`"
+                  @click="selectChunk(abbreviation)"
+                  >{{ abbreviation.abbreviation }}</b-button
                 >
               </span>
               <div class="mt-2">
@@ -110,14 +110,41 @@
               <span
                 v-for="(corpusChunk, index) in corpusesChunk"
                 :key="index"
-                class="mr-1"
+                class="mr-2"
               >
-                <b-tooltip :target="`corpusChunk-${index}`"
+                <!-- <b-tooltip :target="`corpusChunk-${index}`"
                   >PosTag : {{ corpusChunk.postag }} <br />
                   Chunk :
                   {{ corpusChunk.chunker }}</b-tooltip
+                > -->
+                <div
+                  class="btn-group mt-3"
+                  role="group"
+                  aria-label="Basic example"
                 >
-                <b-badge
+                  <button
+                    type="button"
+                    class="text-primary font-14 p-1 corpus-btn"
+                    :style="
+                      corpusChunk.chunker !== null
+                        ? `background-color:${corpusChunk.chunker_color}`
+                        : `background-color:#f5f5f5`
+                    "
+                    @click="selectCorpus(corpusChunk)"
+                  >
+                    {{ corpusChunk.words }}
+                  </button>
+                  <button
+                    v-if="corpusChunk.chunk_group !== null"
+                    type="button"
+                    class="btn pos-tagged font-12 p-1"
+                    @click="removeChunk(corpusChunk)"
+                  >
+                    <i class="fe-trash-2 text-primary font-weight-bold" />
+                  </button>
+                </div>
+
+                <!-- <b-badge
                   :id="`corpusChunk-${index}`"
                   pill
                   class="hand-pointing mt-1 text-primary"
@@ -137,7 +164,7 @@
                     class="fe-trash-2 font-weight-bold font-12 p-1"
                     @click="removeChunk(corpusChunk)"
                   />
-                </b-badge>
+                </b-badge> -->
               </span>
             </b-tab>
             <b-tab title="Result">
@@ -195,6 +222,7 @@ export default {
       idChunkGroup: 0,
       isLoading: false,
       isFetched: false,
+      abbreviations: null,
       // alert
       errorMessage: null,
       dismissSecs: 3,
@@ -209,22 +237,37 @@ export default {
     this.isLoading = true
     this.isModified = false
     this.chunks = await this.fetchChunks()
+    this.abbreviations = this.chunks.reduce((unique, o) => {
+      if (!unique.some((obj) => obj.abbreviation === o.abbreviation)) {
+        unique.push(o)
+      }
+      return unique
+    }, [])
+
+    console.log(this.abbreviation)
     this.corpusesChunk = await this.fetchCorpusChunk()
     this.isFetched = true
     this.isLoading = false
   },
   methods: {
-    backDashboard() {
+    async backDashboard() {
+      if (this.isModified) await this.savingProcess()
       this.$emit('backDashboard')
     },
 
     async fetchChunks() {
-      const resChunks = await this.$axios.$get(`/master/chunker/all`, {
-        headers: {
-          Authorization: this.$auth.strategy.token.get(),
-        },
-      })
-      return resChunks.data
+      try {
+        const resChunks = await this.$axios.$get(`/master/chunker/all`, {
+          headers: {
+            Authorization: this.$auth.strategy.token.get(),
+          },
+        })
+        return resChunks.data.filter((chunk) => chunk.abbreviation !== 'O')
+      } catch (error) {
+        this.dismissCountDown = this.dismissSecs
+        this.errorMessage = error.response.data
+        this.variant = 'danger'
+      }
     },
 
     async fetchCorpusChunk() {
@@ -246,6 +289,7 @@ export default {
             },
           }
         )
+        console.log('resultChunk', resChunk)
         resCorpusWords.data.forEach((data) => {
           let resFilterChunk = resChunk.data.filter(
             (corpusChunk) => corpusChunk.corpus_index === data.corpus_index
@@ -283,7 +327,11 @@ export default {
         this.relation = resRelation.data
 
         return resCorpusWords.data
-      } catch (error) {}
+      } catch (error) {
+        this.dismissCountDown = this.dismissSecs
+        this.errorMessage = error.response.data
+        this.variant = 'danger'
+      }
     },
 
     selectCorpus(item) {
@@ -310,12 +358,49 @@ export default {
     selectChunk(chunk) {
       this.isModified = true
       this.idChunkGroup++
-      this.selectedChunks.forEach((data) => {
+      const sameAbbreviation = this.chunks.filter(
+        (data) => data.abbreviation.trim() === chunk.abbreviation.trim()
+      )
+      let bChunk
+      let iChunk
+      let singleChunk
+      let isSingle = false
+      if (sameAbbreviation.length > 1) {
+        isSingle = false
+        bChunk = sameAbbreviation
+          .filter((data) => data.code === `B-${data.abbreviation.trim()}`)
+          .reduce((data) => data)
+        iChunk = sameAbbreviation
+          .filter((data) => data.code === `I-${data.abbreviation.trim()}`)
+          .reduce((data) => data)
+      } else {
+        isSingle = true
+        singleChunk = sameAbbreviation.reduce((data) => data)
+      }
+
+      this.selectedChunks.forEach((data, index) => {
         data.chunk_group = this.idChunkGroup
-        data.chunker = chunk.code
-        data.chunker_color = chunk.color
-        data.chunker_id = chunk.id
+        if (!isSingle) {
+          if (index === 0) {
+            data.abbreviation = bChunk.abbreviation.trim()
+            data.chunker = bChunk.code
+            data.chunker_color = bChunk.color
+            data.chunker_id = bChunk.id
+          } else {
+            data.abbreviation = iChunk.abbreviation.trim()
+            data.chunker = iChunk.code
+            data.chunker_color = iChunk.color
+            data.chunker_id = iChunk.id
+          }
+        } else {
+          console.log('others', singleChunk)
+          data.abbreviation = singleChunk.abbreviation.trim()
+          data.chunker = singleChunk.code
+          data.chunker_color = singleChunk.color
+          data.chunker_id = singleChunk.id
+        }
       })
+      console.log('selected', this.corpusesChunk)
       this.selectedChunks = []
       this.$refs.chunkTable.syncData()
     },
@@ -335,8 +420,10 @@ export default {
     },
 
     removeChunk(chunk) {
+      this.isModified = true
       console.log(this.relation)
       console.log(chunk)
+
       // check if chunk has relation
       let hasRelation = false
       const indexLeftNode = this.relation.filter(
@@ -361,12 +448,19 @@ export default {
           indexRightNode.push(chunkGroup.reduce((corpus) => corpus))
       })
       if (indexRightNode.length > 0) hasRelation = true
+
       if (!hasRelation) {
-        chunk.chunk_group = null
-        chunk.chunker = null
-        chunk.chunker_color = null
-        chunk.chunker_id = null
-        chunk.isDisplayed = true
+        const sameGroup = this.corpusesChunk.filter(
+          (data) => data.chunk_group === chunk.chunk_group
+        )
+        sameGroup.forEach((data) => {
+          data.chunk_group = null
+          data.chunker = null
+          data.chunker_color = null
+          data.chunker_id = null
+          data.isDisplayed = true
+        })
+
         this.$refs.chunkTable.syncData()
       } else {
         this.dismissCountDown = this.dismissSecs
@@ -394,7 +488,11 @@ export default {
       const resUniqueChunkerGroup = this.corpusesChunk
         .reduce((unique, o) => {
           if (
-            !unique.some((obj) => obj.chunk_group === o.chunk_group) &&
+            !unique.some(
+              (obj) =>
+                obj.chunk_group === o.chunk_group &&
+                obj.chunker_id === o.chunker_id
+            ) &&
             o.chunk_group !== null
           ) {
             unique.push(o)
@@ -411,11 +509,16 @@ export default {
           chunk_group: data.chunk_group,
           chunker_id: data.chunker_id,
           corpus_index: this.corpusesChunk
-            .filter((corpus) => corpus.chunk_group === data.chunk_group)
+            .filter(
+              (corpus) =>
+                corpus.chunk_group === data.chunk_group &&
+                corpus.chunker_id === data.chunker_id
+            )
             .map((corpus) => corpus.corpus_index),
         }
         resultChunker.push(singleChunker)
       })
+      console.log('save', resultChunker)
       try {
         await this.$axios.$post(
           `/corpus/${this.litigation.litigation_id}/chunker`,
@@ -444,6 +547,14 @@ export default {
 <style lang="scss" scoped>
 .un-chunk {
   background-color: #f5f5f5;
+  border: none;
+}
+.corpus-btn {
+  border: none;
+}
+.pos-tagged {
+  background-color: #ffe08a;
+  border: none;
 }
 .hand-pointing {
   cursor: pointer;

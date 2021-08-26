@@ -28,6 +28,15 @@
           </div>
         </div>
         <div class="mt-3">
+          <b-alert
+            :show="dismissCountDown"
+            dismissible
+            fade
+            :variant="variant"
+            @dismiss-count-down="countDownChanged"
+          >
+            {{ errorMessage }}
+          </b-alert>
           <b-tabs
             nav-class="nav-tabs nav-bordered sub-heading-strong"
             active-nav-item-class="text-primary"
@@ -130,6 +139,9 @@ export default {
       isFinishSync: false,
       indexRelation: 0,
       relationList: [],
+      errorMessage: null,
+      dismissSecs: 3,
+      dismissCountDown: 0,
     }
   },
   async mounted() {
@@ -142,37 +154,46 @@ export default {
     this.isFinishSync = true
   },
   methods: {
+    countDownChanged(dismissCountDown) {
+      this.dismissCountDown = dismissCountDown
+    },
     async fetchCorpusTag() {
-      const resCorpusWords = await this.$axios.$get(
-        `/corpus/${this.litigation.litigation_id}/words`,
-        {
-          headers: {
-            Authorization: this.$auth.strategy.token.get(),
-          },
-        }
-      )
-      const resCorpusTag = await this.$axios.$get(
-        `/corpus/${this.litigation.litigation_id}/postag`,
-        {
-          headers: {
-            Authorization: this.$auth.strategy.token.get(),
-          },
-        }
-      )
-      resCorpusWords.data.forEach((data) => {
-        let resFilterTag = resCorpusTag.data.filter(
-          (corpusTag) => corpusTag.corpus_index === data.corpus_index
+      try {
+        const resCorpusWords = await this.$axios.$get(
+          `/corpus/${this.litigation.litigation_id}/words`,
+          {
+            headers: {
+              Authorization: this.$auth.strategy.token.get(),
+            },
+          }
         )
-        if (resFilterTag.length > 0) {
-          resFilterTag = resFilterTag.reduce((corpusTag) => corpusTag)
-          data.postag_id = resFilterTag.postag_id
-          data.postag = resFilterTag.postag
-        } else {
-          data.postag_id = null
-          data.postag = null
-        }
-      })
-      return resCorpusWords.data
+        const resCorpusTag = await this.$axios.$get(
+          `/corpus/${this.litigation.litigation_id}/postag`,
+          {
+            headers: {
+              Authorization: this.$auth.strategy.token.get(),
+            },
+          }
+        )
+        resCorpusWords.data.forEach((data) => {
+          let resFilterTag = resCorpusTag.data.filter(
+            (corpusTag) => corpusTag.corpus_index === data.corpus_index
+          )
+          if (resFilterTag.length > 0) {
+            resFilterTag = resFilterTag.reduce((corpusTag) => corpusTag)
+            data.postag_id = resFilterTag.postag_id
+            data.postag = resFilterTag.postag
+          } else {
+            data.postag_id = null
+            data.postag = null
+          }
+        })
+        return resCorpusWords.data
+      } catch (error) {
+        this.dismissCountDown = this.dismissSecs
+        this.errorMessage = error.response.data
+        this.variant = 'danger'
+      }
     },
     async fetchCorpusChunk() {
       try {
@@ -220,7 +241,11 @@ export default {
         this.idChunkGroup = max
 
         return resCorpusWords.data
-      } catch (error) {}
+      } catch (error) {
+        this.dismissCountDown = this.dismissSecs
+        this.errorMessage = error.response.data
+        this.variant = 'danger'
+      }
     },
     async fetchCorpusRelation() {
       try {
@@ -297,7 +322,11 @@ export default {
         console.log('relation1', this.relationList)
 
         return resCorpusWords.data
-      } catch (error) {}
+      } catch (error) {
+        this.dismissCountDown = this.dismissSecs
+        this.errorMessage = error.response.data
+        this.variant = 'danger'
+      }
     },
     async fetchRelations() {
       try {
@@ -307,7 +336,11 @@ export default {
           },
         })
         return resRelations.data
-      } catch (error) {}
+      } catch (error) {
+        this.dismissCountDown = this.dismissSecs
+        this.errorMessage = error.response.data
+        this.variant = 'danger'
+      }
     },
     backDashboard() {
       this.$emit('backDashboard')
@@ -330,7 +363,11 @@ export default {
           }
         )
         this.$root.$emit('bv::show::modal', 'modalThank')
-      } catch (error) {}
+      } catch (error) {
+        this.dismissCountDown = this.dismissSecs
+        this.errorMessage = error.response.data
+        this.variant = 'danger'
+      }
     },
     cancelModal() {
       this.$root.$emit('bv::hide::modal', 'modal-confirm')

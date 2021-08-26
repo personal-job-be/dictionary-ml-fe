@@ -84,6 +84,7 @@ export default {
   methods: {
     convertData() {
       this.displayedData = []
+      console.log('convert', this.relationData)
       this.relationData.forEach((relation) => {
         const chunkGroupLeft = this.dataChunk
           .filter((chunk) => chunk.corpus_index === relation.corpus_index)

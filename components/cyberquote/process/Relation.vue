@@ -189,22 +189,17 @@
                       : null
                   }}
                 </b-tooltip> -->
-                <b-badge
-                  :id="`corpusRelation-${index}`"
-                  pill
-                  class="hand-pointing mt-1"
+                <b-button
+                  class="text-primary font-14 p-1 corpus-btn mt-3"
                   :style="
                     corpusRelation.chunker_color !== null
                       ? `background-color:${corpusRelation.chunker_color}`
                       : `background-color:#f5f5f5`
                   "
-                  ><span
-                    class="text-primary font-12"
-                    @click="selectRelation(corpusRelation)"
-                  >
-                    {{ corpusRelation.words }}
-                  </span>
-                </b-badge>
+                  @click="selectRelation(corpusRelation)"
+                >
+                  {{ corpusRelation.words }}
+                </b-button>
               </span>
             </b-tab>
             <b-tab title="Result">
@@ -294,7 +289,8 @@ export default {
     remove() {
       this.isModified = true
     },
-    backDashboard() {
+    async backDashboard() {
+      if (this.isModified) await this.savingProcess()
       this.$emit('backDashboard')
     },
     syncData(data) {
@@ -317,7 +313,11 @@ export default {
           },
         })
         return resRelations.data
-      } catch (error) {}
+      } catch (error) {
+        this.dismissCountDown = this.dismissSecs
+        this.errorMessage = error.response.data
+        this.variant = 'danger'
+      }
     },
     async fetchCorpusRelation() {
       try {
@@ -417,7 +417,11 @@ export default {
         // })
 
         return resCorpusWords.data
-      } catch (error) {}
+      } catch (error) {
+        this.dismissCountDown = this.dismissSecs
+        this.errorMessage = error.response.data
+        this.variant = 'danger'
+      }
     },
     syncRelatedTo() {
       const hasRelation = this.corpusesRelation.filter(
@@ -519,8 +523,9 @@ export default {
         const rightNode = this.corpusesRelation.filter(
           (corpus) => corpus.chunk_group === this.rightWord.chunk_group
         )
-
+        this.indexRelation++
         this.relationList.push({
+          id: this.indexRelation,
           corpus_index: leftNode[leftNode.length - 1].corpus_index,
           relation_id: this.selectedRelation.id,
           relation_type: this.selectedRelation.code,
@@ -619,5 +624,8 @@ export default {
 }
 .drop-shadow {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+.corpus-btn {
+  border: none;
 }
 </style>
