@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="table-responsive">
     <!-- <b-card title="Result Table">
       <b-card-body> -->
     <table class="table table-striped">

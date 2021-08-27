@@ -1,5 +1,5 @@
 <template>
-  <div v-if="displayedData !== null">
+  <div v-if="displayedData !== null" class="table-responsive">
     <!-- <b-card title="Result Table">
       <b-card-body> -->
     <table class="table table-striped">

@@ -6,6 +6,7 @@
           <div class="d-flex">
             <b-button
               class="btn-gradient btn-rounded drop-shadow"
+              :disabled="isLoadingChunk"
               @click="backDashboard"
             >
               <i class="fas fa-home"></i>
@@ -20,11 +21,13 @@
               variant="outline-primary"
               pill
               class="mr-2 drop-shadow"
+              :disabled="isLoadingChunk"
               @click="backProcess"
               >Back</b-button
             >
             <b-button
               class="btn-gradient btn-rounded drop-shadow"
+              :disabled="isLoadingChunk"
               @click="nextProcess"
               >Next</b-button
             >
@@ -62,12 +65,15 @@
                   v-for="(abbreviation, index) in abbreviations"
                   :key="index"
                   pill
+                  :disabled="isLoadingChunk"
                   class="text-primary mr-2 mt-2"
                   :style="`background-color:${abbreviation.color}; border: none;`"
                   @click="selectChunk(abbreviation)"
                   >{{ abbreviation.abbreviation }}</b-button
                 >
               </span>
+              <Skeleton :loading="isLoadingChunk" class="mt-2" />
+              <Skeleton :loading="isLoadingChunk" class="mt-1" />
               <div class="mt-2">
                 <span
                   v-for="(selectedChunk, index) in selectedChunks"
@@ -128,6 +134,8 @@
                     :style="
                       corpusChunk.chunker !== null
                         ? `background-color:${corpusChunk.chunker_color}`
+                        : corpusChunk.isSelected
+                        ? 'background-color: #b5b6b0'
                         : `background-color:#f5f5f5`
                     "
                     @click="selectCorpus(corpusChunk)"
@@ -198,11 +206,13 @@
 
 <script>
 import Loading from 'vue-loading-overlay'
+import { Skeleton } from 'vue-loading-skeleton'
 import ChunkTable from '@/components/cyberquote/table/Chunk-Table.vue'
 export default {
   components: {
     Loading,
     ChunkTable,
+    Skeleton,
   },
   props: {
     litigation: {
@@ -230,6 +240,7 @@ export default {
       variant: null,
       isModified: false,
       relation: null,
+      isLoadingChunk: false,
     }
   },
   async mounted() {
@@ -302,6 +313,7 @@ export default {
             data.chunker_color = resFilterChunk.chunker_color
             data.chunker_id = resFilterChunk.chunker_id
             data.isDisplayed = true
+            data.isSelected = false
           } else {
             data.postag = null
             data.chunk_group = null
@@ -309,6 +321,7 @@ export default {
             data.chunker_color = null
             data.chunker_id = null
             data.isDisplayed = true
+            data.isSelected = false
           }
         })
         const max = resCorpusWords.data.reduce(function (prev, current) {
@@ -351,7 +364,7 @@ export default {
           this.selectedChunks.push(data)
         })
         return
-      }
+      } else item.isSelected = true
       this.selectedChunks.push(item)
     },
 
@@ -379,6 +392,7 @@ export default {
       }
 
       this.selectedChunks.forEach((data, index) => {
+        data.isSelected = false
         data.chunk_group = this.idChunkGroup
         if (!isSingle) {
           if (index === 0) {
@@ -485,6 +499,7 @@ export default {
     },
 
     async savingProcess() {
+      this.isLoadingChunk = true
       const resUniqueChunkerGroup = this.corpusesChunk
         .reduce((unique, o) => {
           if (
@@ -539,6 +554,7 @@ export default {
         this.errorMessage = error.response.data
         this.variant = 'danger'
       }
+      this.isLoadingChunk = false
     },
   },
 }

@@ -6,6 +6,7 @@
           <div class="d-flex">
             <b-button
               class="btn-gradient btn-rounded drop-shadow"
+              :disabled="isLoadingTag"
               @click="backDashboard"
             >
               <i class="fas fa-home"></i>
@@ -15,7 +16,9 @@
             </div>
           </div>
           <b-button
+            v-if="!isLoading"
             class="btn-gradient btn-rounded drop-shadow"
+            :disabled="isLoadingTag"
             @click="nextProcess"
             >Next</b-button
           >
@@ -60,6 +63,8 @@
                   {{ posTag.code }}
                 </option>
               </select>
+              <Skeleton :loading="isLoadingTag" class="mt-2" />
+              <Skeleton :loading="isLoadingTag" class="mt-1" />
               <!-- list of selected words -->
               <span v-for="(selectedWord, index) in selectedWords" :key="index">
                 <b-badge class="un-pos-tag ml-2 p-1 mt-1 text-primary" pill
@@ -83,6 +88,7 @@
                 >
                 <b-button
                   class="drop-shadow btn-gradient"
+                  :disabled="isLoadingTag"
                   pill
                   @click="selectTag"
                   >Select tag</b-button
@@ -201,11 +207,13 @@
 
 <script>
 import Loading from 'vue-loading-overlay'
+import { Skeleton } from 'vue-loading-skeleton'
 import PosTagTable from '@/components/cyberquote/table/Pos-Tag-Table.vue'
 export default {
   components: {
     Loading,
     PosTagTable,
+    Skeleton,
   },
   props: {
     litigation: {
@@ -232,6 +240,7 @@ export default {
       dismissSecs: 3,
       dismissCountDown: 0,
       variant: null,
+      isLoadingTag: false,
     }
   },
   async mounted() {
@@ -331,8 +340,8 @@ export default {
         this.variant = 'danger'
       }
     },
-    async backDashboard() {
-      if (this.isModified) await this.savingTag()
+    backDashboard() {
+      // if (this.isModified) await this.savingTag()
       this.$emit('backDashboard')
     },
     selectWord(word) {
@@ -363,7 +372,7 @@ export default {
     clearTag() {
       this.selectedWords = []
     },
-    async nextProcess() {
+    nextProcess() {
       const valid = this.corpusesTag.filter((data) => data.postag === null)
       if (valid.length > 0) {
         this.dismissCountDown = this.dismissSecs
@@ -371,7 +380,7 @@ export default {
         this.variant = 'danger'
         return
       }
-      if (this.isModified) await this.savingTag()
+      // if (this.isModified) await this.savingTag()
       this.$emit('nextProcess', this.corpusesTag)
       // const valid = this.corpusesTag.filter((data) => data.postag === null)
       // if (valid.length > 0) {
@@ -383,6 +392,7 @@ export default {
       // this.$emit('nextProcess', this.corpusesTag)
     },
     async savingTag() {
+      this.isLoadingTag = true
       const resUniquePosTagId = this.corpusesTag
         .reduce((unique, o) => {
           if (!unique.some((obj) => obj.postag_id === o.postag_id)) {
@@ -423,6 +433,7 @@ export default {
         this.errorMessage = error.response.data
         this.variant = 'danger'
       }
+      this.isLoadingTag = false
     },
   },
 }
