@@ -6,6 +6,7 @@
           <b-tabs v-model="tabActive" nav-class="nav-tabs nav-bordered">
             <b-tab title="New" active>
               <b-button
+                :disabled="isLoading"
                 class="btn-rounded drop-shadow btn-gradient"
                 @click="getLitigation"
               >
@@ -28,6 +29,7 @@
                       Case No :
                     </b-col>
                     <b-col>
+                      <Skeleton :loading="isLoading" />
                       <div
                         v-if="litigation !== null"
                         class="ml-2 font-weight-bold text-black"
@@ -38,6 +40,9 @@
                     <b-col md="3">
                       <b-button
                         class="btn-gradient btn-rounded drop-shadow"
+                        :disabled="
+                          newLitigation === null || newLitigation === ''
+                        "
                         @click="process"
                       >
                         Start
@@ -106,8 +111,9 @@ import Chunk from '@/components/cyberquote/process/Chunk.vue'
 import Relation from '@/components/cyberquote/process/Relation.vue'
 import AllTable from '@/components/cyberquote/table/All-Table.vue'
 import DraftTable from '@/components/cyberquote/table/Draft-Table.vue'
+import { Skeleton } from 'vue-loading-skeleton'
 export default {
-  components: { PosTag, Chunk, Relation, AllTable, DraftTable },
+  components: { PosTag, Chunk, Relation, AllTable, DraftTable, Skeleton },
   data() {
     return {
       litigation: null,
@@ -120,6 +126,7 @@ export default {
       errorMessage: null,
       dismissSecs: 3,
       dismissCountDown: 0,
+      isLoading: false,
     }
   },
   mounted() {
@@ -130,6 +137,7 @@ export default {
       this.inProcess = false
     },
     async getLitigation() {
+      this.isLoading = true
       try {
         const resLitigation = await this.$axios.$get(`/litigation/new`, {
           headers: {
@@ -147,6 +155,7 @@ export default {
         this.variant = 'danger'
         console.log(error.response.data.message)
       }
+      this.isLoading = false
     },
     countDownChanged(dismissCountDown) {
       this.dismissCountDown = dismissCountDown

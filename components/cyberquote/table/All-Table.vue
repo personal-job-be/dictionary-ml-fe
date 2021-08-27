@@ -6,6 +6,7 @@
           <div class="d-flex">
             <b-button
               class="btn-gradient btn-rounded drop-shadow"
+              :disabled="isLoadingFinal"
               @click="backDashboard"
             >
               <i class="fas fa-home"></i>
@@ -17,11 +18,13 @@
               variant="outline-primary"
               pill
               class="mr-2 drop-shadow"
+              :disabled="isLoadingFinal"
               @click="backProcess"
               >Back</b-button
             >
             <b-button
               class="btn-gradient btn-rounded drop-shadow"
+              :disabled="isLoadingFinal"
               @click="final"
               >Finalize</b-button
             >
@@ -37,6 +40,8 @@
           >
             {{ errorMessage }}
           </b-alert>
+          <Skeleton :loading="isLoadingFinal" class="mt-2" />
+          <Skeleton :loading="isLoadingFinal" class="mt-1" />
           <b-tabs
             nav-class="nav-tabs nav-bordered sub-heading-strong"
             active-nav-item-class="text-primary"
@@ -108,12 +113,14 @@ import ChunkTable from '@/components/cyberquote/table/Chunk-Table.vue'
 import RelationTable from '@/components/cyberquote/table/Relation-Table.vue'
 import Confirmation from '@/components/cyberquote/alert/Confirmation'
 import ThankYou from '@/components/cyberquote/alert/Thank-You'
+import { Skeleton } from 'vue-loading-skeleton'
 export default {
   components: {
     PosTagTable,
     ChunkTable,
     RelationTable,
     Confirmation,
+    Skeleton,
     ThankYou,
   },
   props: {
@@ -142,6 +149,7 @@ export default {
       errorMessage: null,
       dismissSecs: 3,
       dismissCountDown: 0,
+      isLoadingFinal: false,
     }
   },
   async mounted() {
@@ -353,6 +361,7 @@ export default {
     },
     async confirmation() {
       this.$root.$emit('bv::hide::modal', 'modal-confirm')
+      this.isLoadingFinal = true
       try {
         await this.$axios.$post(
           `/litigation/${this.litigation.litigation_id}/final`,
@@ -368,6 +377,7 @@ export default {
         this.errorMessage = error.response.data
         this.variant = 'danger'
       }
+      this.isLoadingFinal = false
     },
     cancelModal() {
       this.$root.$emit('bv::hide::modal', 'modal-confirm')

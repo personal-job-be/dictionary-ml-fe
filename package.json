@@ -42,6 +42,7 @@
     "vue-form-wizard": "^0.8.4",
     "vue-knob-control": "^1.6.0",
     "vue-loading-overlay": "^3.0",
+    "vue-loading-skeleton": "^1.1.9",
     "vue-multiselect": "^2.1.6",
     "vue-number-input-spinner": "^2.2.0",
     "vue-quill-editor": "^3.0.6",

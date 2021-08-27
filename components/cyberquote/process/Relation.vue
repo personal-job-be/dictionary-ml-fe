@@ -6,6 +6,7 @@
           <div class="d-flex">
             <b-button
               class="btn-gradient btn-rounded drop-shadow"
+              :disabled="isLoadingRelation"
               @click="backDashboard"
             >
               <i class="fas fa-home"></i>
@@ -19,11 +20,13 @@
               variant="outline-primary"
               pill
               class="mr-2 drop-shadow"
+              :disabled="isLoadingRelation"
               @click="back"
               >Back</b-button
             >
             <b-button
               class="btn-gradient btn-rounded drop-shadow"
+              :disabled="isLoadingRelation"
               @click="nextProcess"
               >Next</b-button
             >
@@ -131,17 +134,21 @@
                   }}</span>
                 </b-col>
               </b-row>
+              <Skeleton :loading="isLoadingRelation" class="mt-2" />
+              <Skeleton :loading="isLoadingRelation" class="mt-1" />
               <div class="d-flex justify-content-end mt-2">
                 <b-button
                   variant="outline-primary"
                   pill
                   class="mr-2 drop-shadow"
+                  :disabled="isLoadingRelation"
                   @click="clearRelation"
                   >Clear</b-button
                 >
                 <b-button
                   class="drop-shadow btn-gradient"
                   pill
+                  :disabled="isLoadingRelation"
                   @click="setRelation"
                   >Select Relation</b-button
                 >
@@ -239,10 +246,12 @@
 <script>
 import RelationTable from '@/components/cyberquote/table/Relation-Table.vue'
 import Loading from 'vue-loading-overlay'
+import { Skeleton } from 'vue-loading-skeleton'
 export default {
   components: {
     RelationTable,
     Loading,
+    Skeleton,
   },
   props: {
     litigation: {
@@ -274,6 +283,7 @@ export default {
       dismissSecs: 3,
       dismissCountDown: 0,
       variant: null,
+      isLoadingRelation: false,
     }
   },
   async mounted() {
@@ -581,6 +591,7 @@ export default {
       }
     },
     async savingProcess() {
+      this.isLoadingRelation = true
       const resultRelation = []
       this.relationList.forEach((data) => {
         resultRelation.push({
@@ -610,6 +621,7 @@ export default {
         this.errorMessage = error.response.data
         this.variant = 'danger'
       }
+      this.isLoadingRelation = false
     },
   },
 }

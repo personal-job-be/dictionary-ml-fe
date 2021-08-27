@@ -154,10 +154,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.table-responsive {
-  height: 400px;
-  overflow: scroll;
-}
+// .table-responsive {
+//   height: 400px;
+//   overflow: scroll;
+// }
 thead tr:nth-child(1) th {
   background: white;
   position: sticky;
@@ -171,9 +171,9 @@ tr {
 td {
   vertical-align: middle;
 }
-.overflow-auto::-webkit-scrollbar {
-  display: none;
-}
+// .overflow-auto::-webkit-scrollbar {
+//   display: none;
+// }
 .hand-cursor {
   cursor: pointer;
 }
